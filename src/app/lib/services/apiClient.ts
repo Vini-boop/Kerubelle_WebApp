@@ -1,6 +1,11 @@
 // All API calls use a relative path — Vite proxies /api → http://localhost:3001
 // In production, you can set VITE_API_URL (e.g. https://kerubelle-backend.onrender.com/api)
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+let API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+// Automatically append /api if it's missing to prevent 404 errors
+if (API_BASE_URL !== '/api' && !API_BASE_URL.endsWith('/api')) {
+  API_BASE_URL = API_BASE_URL.replace(/\/$/, '') + '/api';
+}
 
 class APIClient {
   private baseUrl: string;
