@@ -1,6 +1,6 @@
 // All API calls use a relative path — Vite proxies /api → http://localhost:3001
-// This avoids CORS issues in the browser entirely.
-const API_BASE_URL = '/api';
+// In production, you can set VITE_API_URL (e.g. https://kerubelle-backend.onrender.com/api)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 class APIClient {
   private baseUrl: string;
