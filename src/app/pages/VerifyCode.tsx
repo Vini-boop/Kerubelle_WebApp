@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CheckCircle2, Mail, RefreshCw, ArrowLeft } from 'lucide-react';
 
+let API = import.meta.env.VITE_API_URL || '/api';
+if (API !== '/api' && !API.endsWith('/api')) {
+  API = API.replace(/\/$/, '') + '/api';
+}
+
 export function VerifyCode() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -40,7 +45,7 @@ export function VerifyCode() {
     setStatus('verifying');
 
     try {
-      const response = await fetch('/api/auth/verify-otp', {
+      const response = await fetch(`${API}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
@@ -81,7 +86,7 @@ export function VerifyCode() {
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch('/api/auth/resend-verification', {
+      const response = await fetch(`${API}/auth/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() }),

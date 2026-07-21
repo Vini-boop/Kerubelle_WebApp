@@ -4,6 +4,11 @@ import { Mail, ArrowLeft, KeyRound, Lock, CheckCircle2, Eye, EyeOff, RefreshCw }
 
 type Step = 'email' | 'otp' | 'newPassword' | 'done';
 
+let API = import.meta.env.VITE_API_URL || '/api';
+if (API !== '/api' && !API.endsWith('/api')) {
+  API = API.replace(/\/$/, '') + '/api';
+}
+
 export function ForgotPassword() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('email');
@@ -24,7 +29,7 @@ export function ForgotPassword() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const res = await fetch(`${API}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() }),
@@ -65,7 +70,7 @@ export function ForgotPassword() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/reset-password', {
+      const res = await fetch(`${API}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, newPassword }),
@@ -99,7 +104,7 @@ export function ForgotPassword() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const res = await fetch(`${API}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

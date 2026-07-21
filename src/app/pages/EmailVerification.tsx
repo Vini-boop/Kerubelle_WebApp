@@ -3,6 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Mail, CheckCircle2, RefreshCw, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 
+let API = import.meta.env.VITE_API_URL || '/api';
+if (API !== '/api' && !API.endsWith('/api')) {
+  API = API.replace(/\/$/, '') + '/api';
+}
+
 export function EmailVerification() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,7 +37,7 @@ export function EmailVerification() {
     setStatus('verifying');
     setMessage('');
     try {
-      const res = await fetch('/api/auth/verify-otp', {
+      const res = await fetch(`${API}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
@@ -65,7 +70,7 @@ export function EmailVerification() {
     setResendLoading(true);
     setMessage('');
     try {
-      const res = await fetch('/api/auth/resend-verification', {
+      const res = await fetch(`${API}/auth/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
