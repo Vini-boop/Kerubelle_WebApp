@@ -47,8 +47,11 @@ interface AuthContextType {
   setAuthSession: (user: any, token: string) => void;
 }
 
-// Relative URL — Vite proxies /api → http://localhost:3001
-const API = '/api';
+// API Base URL — uses VITE_API_URL in production, otherwise defaults to /api
+let API = import.meta.env.VITE_API_URL || '/api';
+if (API !== '/api' && !API.endsWith('/api')) {
+  API = API.replace(/\/$/, '') + '/api';
+}
 
 // ── Session helpers (sessionStorage = per-tab isolation) ──────
 const session = {
