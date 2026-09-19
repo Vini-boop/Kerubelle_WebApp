@@ -245,7 +245,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Do not set user or token yet; registration only initiates email verification.
         return { success: true, message: d.message || 'Registration successful. Please verify your email.' };
       }
-      return { success: false, message: d.error || 'Registration failed' };
+      // Map status codes to clear messages
+      if (res.status === 409) {
+        return { success: false, message: 'An account with this email already exists. Try logging in instead.', errorType: 'email_exists' };
+      }
+      return { success: false, message: d.error || 'Registration failed. Please try again.' };
     } catch {
       return { success: false, message: 'Network error. Please try again.' };
     } finally { setIsSaving(false); }

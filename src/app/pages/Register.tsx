@@ -60,11 +60,9 @@ export function Register() {
     try {
       const result = await register(name, email, password);
       if (result.success) {
-        // Store registered email and redirect to email verification
+        // Show the success state and navigate to verify-email immediately
         setRegisteredEmail(email);
-        setTimeout(() => {
-          navigate('/verify-email', { state: { email } });
-        }, 1500);
+        navigate('/verify-email', { state: { email } });
       } else {
         setError(result.message || 'Registration failed. Please try again.');
       }
@@ -163,6 +161,13 @@ export function Register() {
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-100 p-4">
               <div className="text-sm text-red-700">{error}</div>
+              {error.toLowerCase().includes('already exists') && (
+                <div className="mt-2">
+                  <Link to="/login" className="text-sm font-semibold text-[#D4A5B8] hover:text-[#F8C8DC] underline">
+                    Sign in to your existing account →
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 

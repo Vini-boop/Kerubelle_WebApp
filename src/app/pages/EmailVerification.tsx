@@ -137,8 +137,19 @@ export function EmailVerification() {
         )}
 
         <form onSubmit={handleVerify} className="space-y-4">
-          {/* Email field (editable if not pre-filled) */}
-
+          {/* Editable email field — pre-filled from state/sessionStorage but correctable */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              Email Address
+            </label>
+            <input
+              type="email" required
+              value={email} onChange={e => setEmail(e.target.value)}
+              disabled={status === 'verifying'}
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F8C8DC]/50 focus:border-[#F8C8DC] transition-all disabled:opacity-60"
+            />
+          </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">6-Digit Code</label>
