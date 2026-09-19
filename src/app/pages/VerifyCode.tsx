@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CheckCircle2, Mail, RefreshCw, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../providers/AuthProvider';
 
 let API = import.meta.env.VITE_API_URL || '/api';
 if (API !== '/api' && !API.endsWith('/api')) {
@@ -9,6 +10,7 @@ if (API !== '/api' && !API.endsWith('/api')) {
 
 export function VerifyCode() {
   const navigate = useNavigate();
+  const { setAuthSession } = useAuth();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [status, setStatus] = useState<'idle' | 'verifying' | 'success' | 'error'>('idle');
@@ -54,9 +56,14 @@ export function VerifyCode() {
       const data = await response.json();
 
       if (response.ok) {
+        // Establish a full session so the user is logged in after verification
+        if (data.user && data.token) {
+          setAuthSession(data.user, data.token);
+        }
         setStatus('success');
         setMessage('Email verified successfully!');
-        setTimeout(() => navigate('/login'), 2000);
+        // Redirect to dashboard since they are now logged in
+        setTimeout(() => navigate('/dashboard'), 2000);
       } else {
         setStatus('error');
         if (data.code === 'OTP_EXPIRED') {
@@ -156,13 +163,13 @@ export function VerifyCode() {
           {status === 'success' ? (
             <div className="space-y-4">
               <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4 text-center">
-                <p className="text-sm text-green-700 dark:text-green-400">You can now log in with your account.</p>
+                <p className="text-sm text-green-700 dark:text-green-400">Your account is verified. Taking you to your dashboard...</p>
               </div>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/dashboard')}
                 className="w-full py-3 rounded-full text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all"
                 style={{ background: 'linear-gradient(135deg, #F8C8DC, #D4A5B8)' }}>
-                Go to Login
+                Go to Dashboard
               </button>
             </div>
           ) : (

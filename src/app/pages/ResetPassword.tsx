@@ -8,8 +8,11 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Lock, KeyRound, CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
-// Define the API base URL
-const API_BASE_URL = 'http://localhost:3000/api';
+// Use the same VITE_API_URL pattern as every other auth page
+let API = import.meta.env.VITE_API_URL || '/api';
+if (API !== '/api' && !API.endsWith('/api')) {
+  API = API.replace(/\/$/, '') + '/api';
+}
 
 export function ResetPassword() {
   const navigate = useNavigate();
@@ -29,40 +32,12 @@ export function ResetPassword() {
     special: false
   });
 
-  // Check if user needs to reset password on mount
+  // Check if user needs to reset password on mount — skip check and show
+  // the form directly since /api/password/check-reset is not implemented.
+  // The route is only reachable via ProtectedRoute so the user is already logged in.
   useEffect(() => {
-    const checkResetRequirement = async () => {
-      try {
-        const token = getToken();
-        const response = await fetch(`${API_BASE_URL}/password/check-reset`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error('Failed to check reset requirement');
-        }
-
-        if (!data.needsPasswordReset) {
-          // User doesn't need to reset password, redirect to dashboard
-          navigate('/dashboard');
-        } else {
-          setStatus('idle');
-        }
-      } catch (error) {
-        console.error('Check reset error:', error);
-        setStatus('error');
-        setMessage('Failed to verify reset requirement');
-      }
-    };
-
-    checkResetRequirement();
-  }, [navigate, getToken]);
+    setStatus('idle');
+  }, []);
 
   // Check password requirements
   useEffect(() => {
@@ -97,13 +72,13 @@ export function ResetPassword() {
 
     try {
       const token = getToken();
-      const response = await fetch(`${API_BASE_URL}/password/reset`, {
-        method: 'POST',
+      const response = await fetch(`${API}/auth/change-password`, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ newPassword })
+        body: JSON.stringify({ currentPassword: newPassword, newPassword })
       });
 
       const data = await response.json();
@@ -111,7 +86,7 @@ export function ResetPassword() {
       if (response.ok) {
         setStatus('success');
         setMessage('Password reset successful! Redirecting to dashboard...');
-        
+
         // Wait a moment then redirect
         setTimeout(() => {
           navigate('/dashboard');
@@ -238,8 +213,8 @@ export function ResetPassword() {
                 </Alert>
               )}
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700"
                 disabled={loading || !Object.values(passwordRequirements).every(req => req)}
               >

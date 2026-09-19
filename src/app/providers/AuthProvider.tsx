@@ -199,14 +199,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session.set('token', d.token);
         return { success: true, role: u.role };
       }
-      // Map error messages to types
+      // Map error messages/codes to typed error types
       let errorType = 'network';
       let message = d.error || 'Login failed';
       const msg = d.message || '';
+      const code = d.code || '';
       if (msg.includes('Email not found')) { errorType = 'email'; message = 'No account found with this email address'; }
       else if (msg.includes('Incorrect password')) { errorType = 'password'; message = 'Incorrect password. Please try again'; }
       else if (msg.includes('deactivated')) { errorType = 'deactivated'; message = 'This account has been deactivated'; }
-      else if (msg.includes('not verified')) { errorType = 'email_not_verified'; message = 'Please verify your email before logging in.'; }
+      else if (code === 'EMAIL_NOT_VERIFIED' || msg.includes('not verified') || msg.includes('Email not verified')) {
+        errorType = 'email_not_verified';
+        message = 'Please verify your email before logging in.';
+      }
       return { success: false, message, errorType };
     } catch {
       return { success: false, message: 'Network error. Check your connection and try again.', errorType: 'network' };
@@ -234,7 +238,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         userRef.current = null;
         if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
-        
+
         // Save the unverified email for the verify screen in case they refresh the page
         sessionStorage.setItem('unverifiedEmail', email);
 
@@ -319,21 +323,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{
-        user,
-        login,
-        logout,
-        register,
-        updateProfile,
-        changePassword,
-        updateUserEmailVerified,
-        isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin' || user?.role === 'staff',
-        isLoading,
-        isSaving,
-        getToken,
-        validateToken,
-        setAuthSession,
-      }}>
+      user,
+      login,
+      logout,
+      register,
+      updateProfile,
+      changePassword,
+      updateUserEmailVerified,
+      isAuthenticated: !!user,
+      isAdmin: user?.role === 'admin' || user?.role === 'staff',
+      isLoading,
+      isSaving,
+      getToken,
+      validateToken,
+      setAuthSession,
+    }}>
       {children}
     </AuthContext.Provider>
   );

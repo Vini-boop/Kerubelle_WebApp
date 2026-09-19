@@ -63,7 +63,7 @@ export function Register() {
         // Store registered email and redirect to email verification
         setRegisteredEmail(email);
         setTimeout(() => {
-          navigate('/verify-email');
+          navigate('/verify-email', { state: { email } });
         }, 1500);
       } else {
         setError(result.message || 'Registration failed. Please try again.');
@@ -109,7 +109,7 @@ export function Register() {
             </div>
 
             <button
-              onClick={() => navigate('/verify-email')}
+              onClick={() => navigate('/verify-email', { state: { email: registeredEmail } })}
               className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#F8C8DC] to-[#D4A5B8] hover:shadow-lg hover:scale-[1.02] transition-all duration-200 mb-4"
             >
               Continue to Verification

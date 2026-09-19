@@ -129,8 +129,8 @@ export function EmailVerification() {
         {/* Error / info message */}
         {message && (
           <div className={`mb-4 px-4 py-3 rounded-xl text-sm border ${status === 'error'
-              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700 text-red-600 dark:text-red-400'
-              : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400'
+            ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700 text-red-600 dark:text-red-400'
+            : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400'
             }`}>
             {message}
           </div>
@@ -148,7 +148,7 @@ export function EmailVerification() {
               disabled={status === 'verifying'} placeholder="• • • • • •"
               className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-center text-2xl tracking-[0.5em] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F8C8DC]/50 focus:border-[#F8C8DC] transition-all font-mono disabled:opacity-60"
             />
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 text-center">Expires in 15 minutes</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 text-center">Expires in 60 minutes</p>
           </div>
 
           <button type="submit" disabled={status === 'verifying' || otp.length !== 6}
